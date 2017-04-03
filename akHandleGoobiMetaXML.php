@@ -1,5 +1,9 @@
 <?php
 
+/*Test-comment
+ * PHP-Class to handle to Goobi Meta-xmlfiles
+ */
+
 class handle_GoobiMetaXML{
 	
 	function __construct($file){
