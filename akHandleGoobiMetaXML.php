@@ -108,7 +108,6 @@ class handle_GoobiMetaXML{
 	}
 	
 	public function writeMetadata(){
-		#echo $this->MapType;
 		switch($this->MapType){
 			case 'person':
 				$this->element->setAttribute('type','person');
