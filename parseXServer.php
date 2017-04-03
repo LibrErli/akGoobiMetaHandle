@@ -4,26 +4,6 @@
 $xrequest = new ALXS();
 $xrequest->xs_request("");
 
-#echo $xrequest->set_number."<br/>";
-#echo $xrequest->NoR;
-
-#echo $xrequest->run_through_set_MWuG();
-
-
-
-
-#var_dump($xrequest->alxs_url);
-#var_dump($xrequest->set_number);
-
-#echo $xrequest->set_number."<br/>";
-#echo $xrequest->NoR;
-
-#$xrequest->run_through_set('453','','','AC00041679','001');
-
-
-
-
-
 class ALXS {
 	
 	public function __construct(){
