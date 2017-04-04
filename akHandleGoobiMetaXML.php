@@ -71,6 +71,7 @@ class handle_GoobiMetaXML{
 		$this->saveGoobiMetaXML();
 		$this->__construct($this->xml);
 		
+		/*New comment */
 	}
 
 	public function setMapType($metadata_name='',$MapType='default'){
