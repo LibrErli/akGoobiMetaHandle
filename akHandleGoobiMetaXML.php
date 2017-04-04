@@ -48,7 +48,7 @@ class handle_GoobiMetaXML{
 		$this->dmdSecID = $string; 
 	}
 		
-	function updateGoobiMetaXML($metadata_name,$metadata_value,$xpath='//goobi:goobi',$whatToUpdate=0){
+	function updateGoobiMetaXML($metadata_name,$metadata_value,$subfield='',$MapType='default',$xpath='//goobi:goobi',$whatToUpdate=0){
 		#$whatToUpdate -> 0: All (Value + Attributes) 1: GND-Attributes
 		#update a specific <goobi:metadata/> value identified by name-attribute.
 		$elements = $this->xpath->query($xpath);
@@ -57,6 +57,7 @@ class handle_GoobiMetaXML{
 			$this->Item = $elements->item($i);
 			switch($whatToUpdate){
 				case 1:
+					
 					break;
 			}
 			/*
