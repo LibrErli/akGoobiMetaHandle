@@ -52,6 +52,7 @@ class handle_GoobiMetaXML{
 		#$whatToUpdate -> 0: All (Value + Attributes) 1: GND-Attributes
 		#update a specific <goobi:metadata/> value identified by name-attribute.
 		$elements = $this->xpath->query($xpath);
+		setMapType($metadata_name,$MapType);
 		for($i=0;$i<$elements->length;$i++)
 		{
 			$this->Item = $elements->item($i);
@@ -72,11 +73,7 @@ class handle_GoobiMetaXML{
 		
 	}
 
-	function insertGoobiMetaXML($metadata_name,$metadata_value,$subfield='',$MapType='default',$xpath='//goobi:goobi'){
-		#insert a new metadata field as last child of <goobi:goobi />
-		$this->metadata_name = $metadata_name;
-		$this->GND = '';
-		
+	public function setMapType($metadata_name='',$MapType='default'){
 		switch($metadata_name){
 			case 'Classification':
 			case 'TitleDocMain':
@@ -87,6 +84,14 @@ class handle_GoobiMetaXML{
 				$this->MapType = $MapType;
 				break;
 		}
+	}
+	
+	function insertGoobiMetaXML($metadata_name,$metadata_value,$subfield='',$MapType='default',$xpath='//goobi:goobi'){
+		#insert a new metadata field as last child of <goobi:goobi />
+		$this->metadata_name = $metadata_name;
+		$this->GND = '';
+		
+		setMapType($metadata_name,$MapType);
 		
 		if(is_array($metadata_value)){ 
 			if(!empty($subfield)){
