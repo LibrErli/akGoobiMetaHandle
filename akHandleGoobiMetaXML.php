@@ -54,7 +54,7 @@ class handle_GoobiMetaXML{
 		$this->setMapType($metadata_name,$MapType);
 		$this->setUpdatingXPath($metadata_name,$metadata_value,$subfield,$xpath);
 		
-		$elements = $this->xpath->query($this->XPath);
+		$elements = $this->xpath->query($this->XPathStr);
 		
 		for($i=0;$i<$elements->length;$i++)
 		{
@@ -68,7 +68,6 @@ class handle_GoobiMetaXML{
 			/*
 			$oldNode = $elements->item($i);
 			$newGoobi_metadata = $this->dom->createElement('goobi:metadata',$metadata_value);
-			$newGoobi_metadata->setAttribute('name',$metadata_name);
 			$oldNode->parentNode->replaceChild($newGoobi_metadata,$oldNode);
 			*/
 		}
@@ -79,28 +78,35 @@ class handle_GoobiMetaXML{
 	public function setUpdatingXPath($metadata_name,$metadata_value,$subfield,$xpath){
 		switch($this->MapType){
 			case 'person':
-				$this->XPath = $xpath."/goobi:metadata[@type='person']/goobi:displayName[text()='".$metadata_value[$subfield]."']/..";
+				$this->XPathStr= $xpath."/goobi:metadata[@type='person']/goobi:displayName[text()='".$metadata_value[$subfield]."']/..";
 				break;
 			case 'Classification':
-				$this->XPath = $xpath."/goobi:metadata[@name='Classification' and text()='".$metadata_value[$subfield]."']";
+				$this->XPathStr= $xpath."/goobi:metadata[@name='Classification' and text()='".$metadata_value[$subfield]."']";
 				break;
 		}
 	}
 	
 	public function insertGND(){
 		switch($this->MapType){
+			
 			case 'person':
-				if(preg_match('/(?<=\(DE-588\)).{5,9}/',$this->GND,$gnd_id)){
-					#var_dump($gnd_id);		
-					$authorityID = $this->dom->createElement('goobi:authorityID',"gnd");
-					$this->element->appendChild($authorityID);
+				if(preg_match('/(?<=\(DE-588\)).{5,9}/',$this->GND,$gnd_id)){	
+					
+					if($this->xpath->query($this->XPathStr."/goobi:authorityID[text()='gnd']")->length==0){
+						$authorityID = $this->dom->createElement('goobi:authorityID',"gnd");
+						$this->element->appendChild($authorityID);
+					}
 
-					$authorityURI = $this->dom->createElement('goobi:authorityURI',"http://d-nb.info/gnd/");
-					$this->element->appendChild($authorityURI);
+					if($this->xpath->query($this->XPathStr."/goobi:authorityURI[text()='http://d-nb.info/gnd/']")->length==0){
+						$authorityURI = $this->dom->createElement('goobi:authorityURI',"http://d-nb.info/gnd/");
+						$this->element->appendChild($authorityURI);
+					}
+					
 					$authorityValue = $this->dom->createElement('goobi:authorityValue',$gnd_id[0]);
 					$this->element->appendChild($authorityValue);
 				}
 				break;
+				
 			case 'Classification':
 				if(preg_match('/(?<=\(DE-588\)).{5,9}/',$this->GND,$gnd_id)){
 					$this->element->setAttribute('authority','gnd');
@@ -151,9 +157,9 @@ class handle_GoobiMetaXML{
 		$this->parentNode->item(0)->appendChild($this->element);	
 		$this->saveGoobiMetaXML();	
 		$this->__construct($this->xml);
-		echo "Set ".$this->metadata_name." with value: ".$this->metadata_value;
+		#echo "Set ".$this->metadata_name." with value: ".$this->metadata_value;
 		if(!empty($this->GND)) { echo " ".$this->GND; }
-		echo "\n";
+		#echo "\n";
 	}
 	
 	public function writeMetadata(){
