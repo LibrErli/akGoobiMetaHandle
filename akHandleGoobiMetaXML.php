@@ -1,6 +1,8 @@
 <?php
 
 /*Test-comment
+ * 
+ * 
  * PHP-Class to handle to Goobi Meta-xmlfiles
  */
 
