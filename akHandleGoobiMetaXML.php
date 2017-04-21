@@ -53,8 +53,18 @@ class handle_GoobiMetaXML{
 	function updateGoobiMetaXML($metadata_name,$metadata_value,$subfield='',$MapType='default',$xpath='//goobi:goobi',$whatToUpdate=0){
 		#$whatToUpdate -> 0: All (Value + Attributes) 1: GND-Attributes
 		#update a specific <goobi:metadata/> value identified by name-attribute.
+		if(is_array($metadata_value)){
+			if(!empty($subfield)){
+				$this->metadata_value = $metadata_value[$subfield];
+			}
+			if(array_key_exists(9,$metadata_value)){
+				$this->GND = $metadata_value[9];
+			}
+		}
+		else { 	$this->metadata_value = $metadata_value; }
+		
 		$this->setMapType($metadata_name,$MapType);
-		$this->setUpdatingXPath($metadata_name,$metadata_value,$subfield,$xpath);
+		$this->setUpdatingXPath($metadata_name,$this->metadata_value,$subfield,$xpath);
 		
 		$elements = $this->xpath->query($this->XPathStr);
 		
@@ -80,10 +90,10 @@ class handle_GoobiMetaXML{
 	public function setUpdatingXPath($metadata_name,$metadata_value,$subfield,$xpath){
 		switch($this->MapType){
 			case 'person':
-				$this->XPathStr= $xpath."/goobi:metadata[@type='person']/goobi:displayName[text()='".$metadata_value[$subfield]."']/..";
+				$this->XPathStr= $xpath."/goobi:metadata[@type='person']/goobi:displayName[text()='".$metadata_value."']/..";
 				break;
 			case 'Classification':
-				$this->XPathStr= $xpath."/goobi:metadata[@name='Classification' and text()='".$metadata_value[$subfield]."']";
+				$this->XPathStr= $xpath."/goobi:metadata[@name='Classification' and text()='".$metadata_value."']";
 				break;
 		}
 	}
@@ -92,7 +102,7 @@ class handle_GoobiMetaXML{
 		switch($this->MapType){
 			
 			case 'person':
-				if(preg_match('/(?<=\(DE-588\)).{5,9}/',$this->GND,$gnd_id)){	
+				if(preg_match('/(?<=\(DE-588\)).*/',$this->GND,$gnd_id)){	
 					
 					if($this->xpath->query($this->XPathStr."/goobi:authorityID[text()='gnd']")->length==0){
 						$authorityID = $this->dom->createElement('goobi:authorityID',"gnd");
@@ -110,7 +120,7 @@ class handle_GoobiMetaXML{
 				break;
 				
 			case 'Classification':
-				if(preg_match('/(?<=\(DE-588\)).{5,9}/',$this->GND,$gnd_id)){
+				if(preg_match('/(?<=\(DE-588\)).*/',$this->GND,$gnd_id)){
 					$this->element->setAttribute('authority','gnd');
 					$this->element->setAttribute('authorityURI','http://d-nb.info/gnd/');
 					$this->element->setAttribute('valueURI',$gnd_id[0]);
@@ -150,6 +160,7 @@ class handle_GoobiMetaXML{
 		}
 		else { 	$this->metadata_value = $metadata_value; }
 		
+		#echo $this->metadata_value."\n";
 		
 		$this->parentNode = $this->xpath->query($xpath);
 		$this->element = $this->dom->createElement('goobi:metadata');
