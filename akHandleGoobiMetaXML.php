@@ -76,10 +76,21 @@ class handle_GoobiMetaXML{
 					$this->GND = $metadata_value[9];
 					$this->insertGND();
 					break;
+				default:
+					$oldNode = $elements->item($i);
+					$newGoobi_metadata = $this->dom->createElement('goobi:metadata',htmlspecialchars($metadata_value));
+					$newGoobi_metadata->setAttribute('name',$metadata_name);
+					$oldNode->parentNode->replaceChild($newGoobi_metadata,$oldNode);
+					if(is_array($metadata_value) and array_key_exists(9,$metadata_value)){
+						$this->GND = $metadata_value[9];
+						$this->insertGND();
+					}
+					break;
 			}
 			/*
 			 $oldNode = $elements->item($i);
 			 $newGoobi_metadata = $this->dom->createElement('goobi:metadata',$metadata_value);
+			 $newGoobi_metadata->setAttribute('name',$metadata_name);
 			 $oldNode->parentNode->replaceChild($newGoobi_metadata,$oldNode);
 			 */
 		}
@@ -94,6 +105,9 @@ class handle_GoobiMetaXML{
 				break;
 			case 'Classification':
 				$this->XPathStr= $xpath."/goobi:metadata[@name='Classification' and text()='".$metadata_value."']";
+				break;
+			default:
+				$this->XPathStr = $xpath;
 				break;
 		}
 	}
@@ -152,13 +166,13 @@ class handle_GoobiMetaXML{
 		
 		if(is_array($metadata_value)){
 			if(!empty($subfield)){
-				$this->metadata_value = $metadata_value[$subfield];
+				$this->metadata_value = htmlspecialchars($metadata_value[$subfield]);
 			}
 			if(array_key_exists(9,$metadata_value)){
 				$this->GND = $metadata_value[9];
 			}
 		}
-		else { 	$this->metadata_value = $metadata_value; }
+		else { 	$this->metadata_value = htmlspecialchars($metadata_value); }
 		
 		#echo $this->metadata_value."\n";
 		
@@ -284,7 +298,7 @@ class handle_GoobiMetaXML{
 		$goobi = $this->dom->createElementNS('http://meta.goobi.org/v1.5.1/', 'goobi:goobi');
 		$extension->appendChild($goobi);
 		
-		$goobimetadata = $this->dom->createElement('goobi:metadata','AK Bibliothek Wien für Sozialwissenschaften');
+		$goobimetadata = $this->dom->createElement('goobi:metadata','AK Bibliothek Wien fÃ¼r Sozialwissenschaften');
 		$goobimetadata->setAttribute('name','PhysicalLocation');
 		$goobi->appendChild($goobimetadata);
 		
