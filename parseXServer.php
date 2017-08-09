@@ -230,7 +230,6 @@ function parseMetadata($xrequest,$ruleset_uri,$scope="",$docstrcttype="",$parsin
 								
 							}
 							
-							
 							if($x==0){		
 								#echo $kat_det[0];
 								#echo $x;
@@ -271,20 +270,11 @@ function parseMetadata($xrequest,$ruleset_uri,$scope="",$docstrcttype="",$parsin
 									
 									
 									if(!empty($val)){
-										
-										#if(isset($regex)){ echo $regex; var_dump($val)."<br/>"; }
-										
+										#var_dump($val)."<br/>";
 										$goobi_feld_str = explode(",",(string) $goobi_feld);
 											foreach($goobi_feld_str as $goobi_name){
 												$result['name'] = trim($goobi_name);
-												#$result['value'] = $val;
-												if(isset($regex)){ preg_match('/'.$regex.'/',$val["a"],$match); $result['value'] = $match; }
-												else {
-													$result['value'] = $val; 
-												}
-												
-												
-												
+												$result['value'] = $val;
 												if(!empty($gnd_val)){ 
 													$result['gnd'] = (string) $gnd_val; 
 													#echo $gnd_val; 
