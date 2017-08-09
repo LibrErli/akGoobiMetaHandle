@@ -61,7 +61,10 @@ class handle_GoobiMetaXML{
 				$this->GND = $metadata_value[9];
 			}
 		}
-		else { 	$this->metadata_value = $metadata_value; }
+		else { 	
+			$this->metadata_value = $metadata_value; 
+			#echo $metadata_value;
+		}
 		
 		$this->setMapType($metadata_name,$MapType);
 		$this->setUpdatingXPath($metadata_name,$this->metadata_value,$subfield,$xpath);
@@ -76,23 +79,15 @@ class handle_GoobiMetaXML{
 					$this->GND = $metadata_value[9];
 					$this->insertGND();
 					break;
-				default:
+				case 0: #Update whole Field
 					$oldNode = $elements->item($i);
-					$newGoobi_metadata = $this->dom->createElement('goobi:metadata',htmlspecialchars($metadata_value));
+					$newGoobi_metadata = $this->dom->createElement('goobi:metadata',$metadata_value);
 					$newGoobi_metadata->setAttribute('name',$metadata_name);
 					$oldNode->parentNode->replaceChild($newGoobi_metadata,$oldNode);
-					if(is_array($metadata_value) and array_key_exists(9,$metadata_value)){
-						$this->GND = $metadata_value[9];
-						$this->insertGND();
-					}
 					break;
 			}
-			/*
-			 $oldNode = $elements->item($i);
-			 $newGoobi_metadata = $this->dom->createElement('goobi:metadata',$metadata_value);
-			 $newGoobi_metadata->setAttribute('name',$metadata_name);
-			 $oldNode->parentNode->replaceChild($newGoobi_metadata,$oldNode);
-			 */
+			#echo $metadata_value."\n";
+			
 		}
 		$this->saveGoobiMetaXML();
 		$this->__construct($this->xml);
@@ -253,24 +248,36 @@ class handle_GoobiMetaXML{
 		$metsStructMap->setAttribute('TYPE','LOGICAL');
 		$parent->item(0)->appendChild($metsStructMap);
 		
-		$metsdiv = $this->dom->createElement('mets:div');
-		$metsdiv->setAttribute('DMDID',$id[0]);
-		$dmdid = preg_match('/(?<=DMD)LOG_[\d]{4}/',$id[0],$match);
-		$metsdiv->setAttribute('ID',$match[0]);
-		$metsdiv->setAttribute('TYPE',$type[0]);
-		$metsStructMap->appendChild($metsdiv);
-		
-		$metsdiv1 = $this->dom->createElement('mets:div');
-		$dmdid = preg_match('/(?<=DMD)LOG_[\d]{4}/',$id[1],$match);
-		$metsdiv1->setAttribute('ID',$match[0]);
-		$metsdiv1->setAttribute('TYPE',$type[1]);
-		$metsdiv->appendChild($metsdiv1);
-		
-		$metsmptr = $this->dom->createElement('mets:mptr');
-		$metsmptr->setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:xlink','http://www.w3.org/1999/xlink');
-		$metsmptr->setAttribute('LOCTYPE','URL');
-		$metsmptr->setAttribute('xlink:href','');
-		$metsdiv1->appendChild($metsmptr);
+		switch($type[1]){
+			case 'Monograph':
+				$metsdiv = $this->dom->createElement('mets:div');
+				$metsdiv->setAttribute('DMDID','DMDLOG_0000');
+				$metsdiv->setAttribute('ID','LOG_0000');
+				$metsdiv->setAttribute('ID','LOG_0000');
+				$metsdiv->setAttribute('TYPE',$type[1]);
+				$metsStructMap->appendChild($metsdiv);
+			break;
+			default:
+				$metsdiv = $this->dom->createElement('mets:div');
+				$metsdiv->setAttribute('DMDID',$id[0]);
+				$dmdid = preg_match('/(?<=DMD)LOG_[\d]{4}/',$id[0],$match);
+				$metsdiv->setAttribute('ID',$match[0]);
+				$metsdiv->setAttribute('TYPE',$type[0]);
+				$metsStructMap->appendChild($metsdiv);
+				
+				$metsdiv1 = $this->dom->createElement('mets:div');
+				$dmdid = preg_match('/(?<=DMD)LOG_[\d]{4}/',$id[1],$match);
+				$metsdiv1->setAttribute('ID',$match[0]);
+				$metsdiv1->setAttribute('TYPE',$type[1]);
+				$metsdiv->appendChild($metsdiv1);
+				
+				$metsmptr = $this->dom->createElement('mets:mptr');
+				$metsmptr->setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:xlink','http://www.w3.org/1999/xlink');
+				$metsmptr->setAttribute('LOCTYPE','URL');
+				$metsmptr->setAttribute('xlink:href','');
+				$metsdiv1->appendChild($metsmptr);
+			break;
+		}
 		
 		$this->saveGoobiMetaXML();
 	}
@@ -315,23 +322,36 @@ class handle_GoobiMetaXML{
 		$metsStructMap->setAttribute('TYPE','LOGICAL');
 		$parent->item(0)->appendChild($metsStructMap);
 		
-		$metsdiv = $this->dom->createElement('mets:div');
-		$metsdiv->setAttribute('ID',"LOG_0002");
-		$metsdiv->setAttribute('TYPE',$type[0]);
-		$metsStructMap->appendChild($metsdiv);
+		switch($type[1]){
+			case 'Monograph':
+				$metsdiv = $this->dom->createElement('mets:div');
+				$metsdiv->setAttribute('DMDID','DMDLOG_0000');
+				$metsdiv->setAttribute('ID','LOG_0000');
+				$metsdiv->setAttribute('ID','LOG_0000');
+				$metsdiv->setAttribute('TYPE',$type[1]);
+				$metsStructMap->appendChild($metsdiv);
+			break;
+			default:
 		
-		$metsdiv1 = $this->dom->createElement('mets:div');
-		#$dmdid = preg_match('/(?<=DMD)LOG_[\d]{4}/',$id[1],$match);
-		$metsdiv1->setAttribute('ID',"LOG_0003");
-		$metsdiv1->setAttribute('DMDID',"DMDLOG_0001");
-		$metsdiv1->setAttribute('TYPE',$type[1]);
-		$metsdiv->appendChild($metsdiv1);
-		
-		$metsmptr = $this->dom->createElement('mets:mptr');
-		$metsmptr->setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:xlink','http://www.w3.org/1999/xlink');
-		$metsmptr->setAttribute('LOCTYPE','URL');
-		$metsmptr->setAttribute('xlink:href','');
-		$metsdiv->appendChild($metsmptr);
+				$metsdiv = $this->dom->createElement('mets:div');
+				$metsdiv->setAttribute('ID',"LOG_0002");
+				$metsdiv->setAttribute('TYPE',$type[0]);
+				$metsStructMap->appendChild($metsdiv);
+				
+				$metsdiv1 = $this->dom->createElement('mets:div');
+				#$dmdid = preg_match('/(?<=DMD)LOG_[\d]{4}/',$id[1],$match);
+				$metsdiv1->setAttribute('ID',"LOG_0003");
+				$metsdiv1->setAttribute('DMDID',"DMDLOG_0001");
+				$metsdiv1->setAttribute('TYPE',$type[1]);
+				$metsdiv->appendChild($metsdiv1);
+				
+				$metsmptr = $this->dom->createElement('mets:mptr');
+				$metsmptr->setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:xlink','http://www.w3.org/1999/xlink');
+				$metsmptr->setAttribute('LOCTYPE','URL');
+				$metsmptr->setAttribute('xlink:href','');
+				$metsdiv->appendChild($metsmptr);
+			break;
+		}
 		
 		$metsStructMap = $this->dom->createElement('mets:structMap');
 		$metsStructMap->setAttribute('TYPE','PHYSICAL');
@@ -354,6 +374,11 @@ class handle_GoobiMetaXML{
 		$this->saveGoobiMetaXML();
 	}
 	
+	function setanchorID2ExistingNode($xpath){
+		$element = $this->xpath->query($xpath);
+		$element->item(0)->setAttribute('anchorId','true');
+		$this->saveGoobiMetaXML();
+	}
 }
 
 ?>
