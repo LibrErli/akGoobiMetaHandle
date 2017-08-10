@@ -24,7 +24,7 @@ class ALXS {
 		$this->NoR = $xml->no_records;
 	}
 	
-	public function load_set_entry($i=0){
+	public function load_set_entry($i=1){
 		$url = $this->alxs_url."/X?op=present&set_entry=".$i."&set_number=".$this->set_number;
 		#	echo $url."<br/>";
 		$str = file_get_contents($url);
@@ -67,21 +67,21 @@ class ALXS {
 
 	}
 	
-	public function get_value_of_cat($field,$ind1='',$ind2='', $subfield='',$parsingMetadataFormat){
+	public function get_value_of_cat($field,$ind1='',$ind2='', $subfield='',$parsingMetadataFormat,$getWholeCat=1){
 		#echo $parsingMetadataFormat;
 		if($parsingMetadataFormat=='oai_marc'){
 			$xpath_str = "//varfield[@id='".$field."'";
 				if(!empty($ind1)) { $xpath_str .= " and @i1='".trim($ind1,'*')."'"; }
 			$xpath_str .= "]/subfield";
 				if(!empty($subfield)){ $xpath_str.="[@label='".$subfield."']"; } 
-			$xpath_str .= "/parent::*";
+			if($getWholeCat==1){ $xpath_str .= "/parent::*"; }
 		}
 		elseif($parsingMetadataFormat=='mab_xml'){
 			$xpath_str = "//*[name()='datafield' and @tag='".$field."'";
 				if(!empty($ind1)) { $xpath_str .= " and @ind1='".trim($ind1,'*')."'"; }
 			$xpath_str .= "]/*[name()='subfield' ";
 				if(!empty($subfield)){ $xpath_str.=" and @code='".$subfield."'"; } 
-			$xpath_str .= "]/parent::*";
+			if($getWholeCat==1){ $xpath_str .= "]/parent::*"; }
 		}
 		
 		#var_dump($this->bibXML);
@@ -96,8 +96,6 @@ class ALXS {
 		
 	}
 	
-	
-
 	
 	function run_through_set_MWuG(){
 		$NoR = intval($this->NoR);
